@@ -2,67 +2,94 @@
 
 namespace Formativ\Deployment;
 
+use App;
 use Illuminate\Support\ServiceProvider;
 
-class DeploymentServiceProvider extends ServiceProvider
+class DeploymentServiceProvider
+extends ServiceProvider
 {
     protected $defer = true;
 
     public function register()
     {
-        $this->app->bind("deployment.asset.manager", function()
+        App::bind("deployment.asset.manager", function()
         {
-            return new Asset\Manager($this->app->make("files"), $this->app->make("deployment.machine"));
+            return new Asset\Manager(
+                App::make("files"),
+                App::make("deployment.machine")
+            );
         });
 
-        $this->app->bind("deployment.asset.watcher", function()
+        App::bind("deployment.asset.watcher", function()
         {
-            return new Asset\Watcher($this->app->make("files"), $this->app->make("deployment.machine"));
+            return new Asset\Watcher(
+                App::make("files"),
+                App::make("deployment.machine")
+            );
         });
 
-        $this->app->bind("deployment.distribution", function()
+        App::bind("deployment.distribution", function()
         {
-            return new Distribution($this->app->make("files"), $this->app->make("deployment.machine"));
+            return new Distribution(
+                App::make("files"),
+                App::make("deployment.machine")
+            );
         });
 
-        $this->app->bind("deployment.machine", function()
+        App::bind("deployment.machine", function()
         {
-            return new Machine($this->app->make("files"));
+            return new Machine(
+                App::make("files")
+            );
         });
 
-        $this->app->bind("deployment.command.asset.combine", function()
+        App::bind("deployment.command.asset.combine", function()
         {
-            return new Command\Asset\Combine($this->app->make("deployment.asset.manager"));
+            return new Command\Asset\Combine(
+                App::make("deployment.asset.manager")
+            );
         });
 
-        $this->app->bind("deployment.command.asset.minify", function()
+        App::bind("deployment.command.asset.minify", function()
         {
-            return new Command\Asset\Minify($this->app->make("deployment.asset.manager"));
+            return new Command\Asset\Minify(
+                App::make("deployment.asset.manager")
+            );
         });
 
-        $this->app->bind("deployment.command.asset.watch", function()
+        App::bind("deployment.command.asset.watch", function()
         {
-            return new Command\Asset\Watch($this->app->make("deployment.asset.manager"));
+            return new Command\Asset\Watch(
+                App::make("deployment.asset.manager")
+            );
         });
 
-        $this->app->bind("deployment.command.distribute.prepare", function()
+        App::bind("deployment.command.distribute.prepare", function()
         {
-            return new Command\Distribute\Prepare($this->app->make("deployment.distribution"));
+            return new Command\Distribute\Prepare(
+                App::make("deployment.distribution")
+            );
         });
 
-        $this->app->bind("deployment.command.distribute.sync", function()
+        App::bind("deployment.command.distribute.sync", function()
         {
-            return new Command\Distribute\Sync($this->app->make("deployment.distribution"));
+            return new Command\Distribute\Sync(
+                App::make("deployment.distribution")
+            );
         });
 
-        $this->app->bind("deployment.command.machine.add", function()
+        App::bind("deployment.command.machine.add", function()
         {
-            return new Command\Machine\Add($this->app->make("deployment.machine"));
+            return new Command\Machine\Add(
+                App::make("deployment.machine")
+            );
         });
 
-        $this->app->bind("deployment.command.machine.remove", function()
+        App::bind("deployment.command.machine.remove", function()
         {
-            return new Command\Machine\Remove($this->app->make("deployment.machine"));
+            return new Command\Machine\Remove(
+                App::make("deployment.machine")
+            );
         });
 
         $this->commands(
